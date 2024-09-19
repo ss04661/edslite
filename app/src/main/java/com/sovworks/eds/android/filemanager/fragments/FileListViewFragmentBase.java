@@ -405,6 +405,7 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
 
     public void selectFile(BrowserRecord file)
     {
+        Logger.debug(TAG + ": selectFile");
         if(isSelectAction() && isSingleSelectionMode())
             clearSelectedFlag();
         file.setSelected(true);
@@ -416,6 +417,7 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
 
     public void unselectFile(BrowserRecord file)
     {
+        Logger.debug(TAG + ": unselectFile");
         file.setSelected(false);
         if(!haveSelectedFiles() && !isSelectAction())
             stopSelectionMode();
@@ -485,6 +487,7 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
     @Override
     public boolean onBackPressed()
     {
+        Logger.debug(TAG + ": onBackPressed");
         return goToPrevLocation();
     }
 
@@ -732,25 +735,25 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
                 selectFile(rec);
             return true;
         });
-        lv.setOnItemClickListener((adapterView, view, pos, l) ->
-        {
-            BrowserRecord rec = (BrowserRecord) adapterView.getItemAtPosition(pos);
-            if(rec!=null)
-            {
-                if(rec.isSelected())
-                {
-                    if(!isSelectAction() || !isSingleSelectionMode())
-                        unselectFile(rec);
-                }
-                else if(rec.allowSelect() && (_actionMode!=null || (isSelectAction() && rec.isFile())))
-                     selectFile(rec);
-                else
-                     onFileClicked(rec);
-            }
-        });
+        // lv.setOnItemClickListener((adapterView, view, pos, l) ->
+        // {
+        //     BrowserRecord rec = (BrowserRecord) adapterView.getItemAtPosition(pos);
+        //     if(rec!=null)
+        //     {
+        //         if(rec.isSelected())
+        //         {
+        //             if(!isSelectAction() || !isSingleSelectionMode())
+        //                 unselectFile(rec);
+        //         }
+        //         else if(rec.allowSelect() && (_actionMode!=null || (isSelectAction() && rec.isFile())))
+        //              selectFile(rec);
+        //         else
+        //              onFileClicked(rec);
+        //     }
+        // });
     }
 
-    protected void onFileClicked(BrowserRecord file)
+    public void onFileClicked(BrowserRecord file)
     {
         try
         {
@@ -898,6 +901,7 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
 
     protected void stopSelectionMode()
     {
+        Logger.debug(TAG + ": stopSelectionMode");
         if(_actionMode!=null)
             _actionMode.finish();
     }
@@ -1104,6 +1108,8 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
 
     protected void onSelectionChanged()
     {
+        Logger.debug(TAG + ": onSelectionChanged");
+        
         ArrayList<BrowserRecord> sr = getSelectedFiles();
         if(showSelectedFilenameEditText())
         {
@@ -1381,6 +1387,39 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
 
     }
 
+    public void selectFileByName(String name)
+	{
+        ListView lv = getListView();
+        BrowserRecord lr = null;
+        Logger.debug("selectFileByName : " + name);
+        for(int i=0;i<lv.getCount();i++)
+        {
+            BrowserRecord rec = (BrowserRecord) lv.getItemAtPosition(i);
+            if(rec.allowSelect() && rec.getName().equals(name))
+            {
+                selectFile(rec);
+                lv.setSelection(i);
+                break;
+            }
+        }
+	}
+    
+    public void scrollToFile(String name)
+	{
+        ListView lv = getListView();
+        BrowserRecord lr = null;
+        Logger.debug("scrollToFile : " + name);
+        for(int i=0;i<lv.getCount();i++)
+        {
+            BrowserRecord rec = (BrowserRecord) lv.getItemAtPosition(i);
+            if(rec.getName().equals(name))
+            {
+                lv.setSelection(i);
+                break;
+            }
+        }
+	}
+    
     private void selectAllFiles()
 	{
         ListView lv = getListView();

@@ -1,0 +1,18 @@
+下载 gradle-4.10.1
+https://github.com/gradle/gradle-distributions/releases/download/v4.10.1/gradle-4.10.1-all.zip
+
+编译
+set path=D:\cc\gradle-4.10.1\bin;%path%;
+cd /d D:\git\edslite
+
+gradle.bat build
+
+
+调试
+set path=D:\bin\platform-tools;%path%;
+adb devices
+
+adb install D:\git\edslite\app\build\outputs\apk\liteLicCheckNoneNoinetNofsml\debug\EDS-lite-licCheckNone-noinet-nofsml-debug-v2.0.0.237.apk
+
+adb logcat | findstr EDS
+

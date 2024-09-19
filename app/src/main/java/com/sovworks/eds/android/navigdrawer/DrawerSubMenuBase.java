@@ -118,7 +118,7 @@ public abstract class DrawerSubMenuBase extends DrawerMenuItemBase
                         collapse();
                     else
                     {
-                        collapseAll();
+                        // collapseAll();
                         expand();
                     }
                     getAdapter().notifyDataSetChanged();

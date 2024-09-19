@@ -18,6 +18,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import com.sovworks.eds.android.EdsApplication;
 import com.sovworks.eds.android.Logger;
@@ -409,7 +411,7 @@ public abstract class FileManagerActivityBase extends RxActivity implements Prev
     @Override
     public void onBackPressed()
     {
-        Logger.debug(TAG + ": onBackPressed");
+        Logger.debug("FileManagerActivityBase : onBackPressed");
 
         if(_drawer.onBackPressed())
             return;
@@ -765,6 +767,31 @@ public abstract class FileManagerActivityBase extends RxActivity implements Prev
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void closePreviewFragment()
+    {
+        hideSecondaryFragment();
+    }
+
+    @Override
+    public void selectFileByName(String name)
+    {
+        FileListViewFragment f = getFileListViewFragment();
+        if(f!=null)
+            f.selectFileByName(name);
+        Toast toast = Toast.makeText(getApplicationContext(), "Selected "+name, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
+    @Override
+    public void scrollToFile(String name)
+    {
+        FileListViewFragment f = getFileListViewFragment();
+        if(f!=null)
+            f.scrollToFile(name);
     }
 
     protected void checkIfCurrentLocationIsStillOpen()

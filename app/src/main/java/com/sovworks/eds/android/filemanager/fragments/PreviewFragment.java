@@ -24,6 +24,7 @@ import com.sovworks.eds.android.helpers.CachedPathInfo;
 import com.sovworks.eds.android.service.FileOpsService;
 import com.sovworks.eds.android.settings.UserSettings;
 import com.sovworks.eds.android.views.GestureImageView.NavigListener;
+import com.sovworks.eds.android.views.GestureImageView.EditListener;
 import com.sovworks.eds.android.views.GestureImageViewWithFullScreenMode;
 import com.sovworks.eds.exceptions.ApplicationException;
 import com.sovworks.eds.fs.Path;
@@ -55,6 +56,9 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 		Location getLocation();
 		Object getFilesListSync();
 		void onToggleFullScreen();
+		void closePreviewFragment();
+		void selectFileByName(String name);
+		void scrollToFile(String name);
 	}
 	
 	public static final String TAG = "PreviewFragment";
@@ -190,6 +194,7 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 	@Override
 	public boolean onBackPressed()
 	{
+        Logger.debug(TAG + ": onBackPressed");
 		return false;
 	}
 		
@@ -227,6 +232,23 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 				}
 			}
 		});
+		_mainImageView.setEditListener(new EditListener()
+		{
+			@Override
+			public void onClose()
+			{
+				Logger.debug("onClose");
+				closePreviewFragment();
+			}
+
+			@Override
+			public void onSelect()
+			{
+				Logger.debug("onSelect");
+				selectImage();
+			}
+		});
+
 		_viewSwitcher = view.findViewById(R.id.viewSwitcher);
 		_mainImageView.setOnLoadOptimImageListener(srcImageRect ->
 		{
@@ -334,7 +356,7 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 		if(_mainImageView!=null && _isFullScreen)
 			_mainImageView.setFullscreenMode(true);
 	}
-	
+
 	private GestureImageViewWithFullScreenMode _mainImageView;
 	private ViewSwitcher _viewSwitcher;
 	private Path _currentImagePath, _prevImagePath, _nextImagePath;
@@ -441,6 +463,24 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 		_mainImageView.setAutoZoom(val);
 	}
 
+	private void closePreviewFragment(){
+		String filePath = _currentImagePath.getPathDesc();
+		String fileName  = new java.io.File(filePath).getName();
+		Host h = getPreviewFragmentHost();
+		h.closePreviewFragment();
+		h.scrollToFile(fileName);
+	}
+
+	private void selectImage()
+	{
+		String filePath = _currentImagePath.getPathDesc();
+		String fileName  = new java.io.File(filePath).getName();
+		
+		Logger.debug(_currentImagePath.getPathString());
+		Logger.debug(_currentImagePath.getPathDesc());
+		getPreviewFragmentHost().selectFileByName(fileName);
+	}
+
 	private void moveLeft() throws IOException, ApplicationException
 	{
 		if(_prevImagePath != null)
@@ -530,8 +570,8 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 		if(_currentImagePath == null)
 			return;
 		Logger.debug(TAG + ": loading image");
-		if(regionRect == null)
-			showLoading();
+		// if(regionRect == null)
+		// 	showLoading();
 		Single<LoadedImage> loadImageTaskObservable = LoadedImage.createObservable(getActivity().getApplicationContext(), _currentImagePath, _viewRect, regionRect).
 				subscribeOn(Schedulers.io()).
 				observeOn(AndroidSchedulers.mainThread()).

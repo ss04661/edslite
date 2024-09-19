@@ -175,6 +175,7 @@ public class FilePropertiesFragment extends Fragment implements FileManagerFragm
 	@Override
 	public boolean onBackPressed()
 	{
+        Logger.debug("FilePropertiesFragment : onBackPressed");
 		return false;
 	}
 

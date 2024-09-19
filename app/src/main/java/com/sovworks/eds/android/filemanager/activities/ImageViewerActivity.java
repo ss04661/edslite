@@ -112,6 +112,21 @@ public class ImageViewerActivity extends Activity implements PreviewFragment.Hos
 			CompatHelper.restartActivity(this);
 	}
 
+    @Override
+    public void closePreviewFragment()
+    {
+    }
+
+    @Override
+    public void selectFileByName(String name)
+    {
+    }
+
+    @Override
+    public void scrollToFile(String name)
+    {
+    }
+
 	public TaskFragment.TaskCallbacks getRestorePathsTaskCallbacks()
 	{
 		return new ProgressDialogTaskFragmentCallbacks(this,R.string.loading)

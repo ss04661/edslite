@@ -30,12 +30,20 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         style="?attr/fmRadioStyle"/>
-    <TextView
-		android:id="@android:id/text1"
+    <LinearLayout
+		android:id="@+id/text3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
         android:layout_toRightOf="@android:id/icon1"
         android:layout_toEndOf="@android:id/icon1"
-		style="@style/FileName" />
+        android:layout_centerVertical="true">
+            <TextView
+                android:id="@android:id/text1"
+                android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+                style="@style/FileName" />
+    </LinearLayout>
 </RelativeLayout>

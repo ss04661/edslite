@@ -24,11 +24,16 @@ public class GestureImageView extends ImageView
 		void onOptimImageRequired(Rect srcImageRect);
 	}
 	
-	
 	public interface NavigListener
 	{
 		void onNext();
 		void onPrev();
+	}
+
+	public interface EditListener
+	{
+		void onClose();
+		void onSelect();
 	}
 
 	public GestureImageView(Context context, AttributeSet attr)
@@ -79,6 +84,18 @@ public class GestureImageView extends ImageView
 				return false;
 			}
 
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                // 处理双击事件
+				_editListener.onClose();	
+                return true;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                // 处理长按事件
+				_editListener.onSelect();	
+            }
 		});
 		setScaleType(ScaleType.MATRIX);
 	}
@@ -86,6 +103,11 @@ public class GestureImageView extends ImageView
 	public void setNavigListener(NavigListener listener)
 	{
 		_navigListener = listener;
+	}
+
+	public void setEditListener(EditListener listener)
+	{
+		_editListener = listener;
 	}
 
 	@Override
@@ -327,6 +349,7 @@ public class GestureImageView extends ImageView
 	
 	
 	private NavigListener _navigListener;
+	private EditListener _editListener;
 	private final RectF _imageRect = new RectF(), _viewRect = new RectF();
 	private final ScaleGestureDetector _scaleDetector;
 	private final GestureDetector _flingDetector;

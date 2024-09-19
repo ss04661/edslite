@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import com.sovworks.eds.android.R;
 import com.sovworks.eds.android.filemanager.activities.FileManagerActivity;
@@ -153,6 +154,21 @@ public abstract class FsBrowserRecord extends CachedPathInfoBase implements Brow
 
         TextView tv = view.findViewById(android.R.id.text1);
      	tv.setText(getName());
+
+        LinearLayout tv2 = view.findViewById(R.id.text3);
+        if(tv2!=null){
+            tv2.setOnClickListener(view1 ->
+            {
+                if(hf.isInSelectionMode()){
+                    if(FsBrowserRecord.this.isFile()){
+                        hf.onFileClicked(FsBrowserRecord.this);
+                    }
+                }else{
+                    hf.onFileClicked(FsBrowserRecord.this);
+                }
+            });
+        }
+        
 
         ImageView iv = view.findViewById(android.R.id.icon);
         iv.setImageDrawable(getDefaultIcon());

@@ -85,6 +85,9 @@ android {
             debuggable true
             jniDebuggable true
         }
+        release {
+            signingConfig signingConfigs.debug
+        }
     }
 
     packagingOptions {
