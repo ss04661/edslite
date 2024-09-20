@@ -675,7 +675,7 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
                 if(scrollPosition >= num)
                     sp = num - 1;
                 if(sp >= 0)
-                    //lv.setSelection(sp);
+                    // lv.setSelection(sp);
                     lv.smoothScrollToPosition(sp);
             }
         }
@@ -1409,12 +1409,16 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
         ListView lv = getListView();
         BrowserRecord lr = null;
         Logger.debug("scrollToFile : " + name);
-        for(int i=0;i<lv.getCount();i++)
+        int count = lv.getCount();
+        for(int i=0;i<count;i++)
         {
             BrowserRecord rec = (BrowserRecord) lv.getItemAtPosition(i);
             if(rec.getName().equals(name))
             {
-                lv.setSelection(i);
+                int pos = i-4;
+                if(pos>=count)
+                    pos = count-1;
+                lv.setSelection(pos);
                 break;
             }
         }
