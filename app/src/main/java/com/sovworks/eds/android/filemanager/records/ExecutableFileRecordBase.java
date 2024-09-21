@@ -3,6 +3,7 @@ package com.sovworks.eds.android.filemanager.records;
 import android.content.Context;
 import android.net.Uri;
 
+import com.sovworks.eds.android.Logger;
 import com.sovworks.eds.android.R;
 import com.sovworks.eds.android.errors.UserException;
 import com.sovworks.eds.android.helpers.TempFilesMonitor;
@@ -36,30 +37,32 @@ public abstract class ExecutableFileRecordBase extends FileRecord
 	@Override
 	public boolean open() throws Exception
 	{
-		if(!isFile())
-			return false;		
-		String mime = FileOpsService.getMimeTypeFromExtension(_host, new StringPathUtil(getName()).getFileExtension());
-		if(mime.startsWith("image/"))
-			openImageFile(_loc,this, false);
-		else
-			startDefaultFileViewer(_loc,this);
-		return true;
+		return open(false);
 	}
 
     @Override
 	public boolean openInplace() throws Exception
 	{
+		return open(true);
+	}
+
+	public boolean open(boolean inplace) throws Exception
+	{
 		if(!isFile())
 			return false;
-
-		String mime = FileOpsService.getMimeTypeFromExtension(_host,new StringPathUtil(getName()).getFileExtension());
+		String mime = FileOpsService.getMimeTypeFromExtension(_host, new StringPathUtil(getName()).getFileExtension());
+		Logger.debug("ExecutableFileRecordBase : mime : "+mime);
 		if(mime.startsWith("image/"))
-		{
-			openImageFile(_loc, this, true);
-			return true;
+			openImageFile(_loc,this, inplace);
+		else if(mime.startsWith("video/"))
+			openVideoFile(_loc,this);
+		else{
+			if(inplace){
+				_host.showProperties(this, true);
+			}
+			startDefaultFileViewer(_loc,this);
 		}
-		_host.showProperties(this, true);
-		return open();
+		return true;
 	}
 	
 	protected Location _loc;
@@ -95,6 +98,20 @@ public abstract class ExecutableFileRecordBase extends FileRecord
 		{
 			if(inplace)
 				_host.showPhoto(rec, true);
+			startDefaultFileViewer(location, rec);
+		}
+	}
+
+	protected void openVideoFile(Location location, BrowserRecord rec) throws IOException, UserException, ApplicationException
+	{
+		int ivMode = _settings.getInternalImageViewerMode();
+		if(ivMode == SettingsCommon.USE_INTERNAL_IMAGE_VIEWER_ALWAYS ||
+				(ivMode == SettingsCommon.USE_INTERNAL_IMAGE_VIEWER_VIRT_FS &&
+						location instanceof Openable)
+		)
+			_host.showVideo(rec);
+		else
+		{
 			startDefaultFileViewer(location, rec);
 		}
 	}

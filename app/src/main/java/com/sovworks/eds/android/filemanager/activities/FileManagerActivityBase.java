@@ -31,6 +31,7 @@ import com.sovworks.eds.android.filemanager.fragments.FileListDataFragment;
 import com.sovworks.eds.android.filemanager.fragments.FileListViewFragment;
 import com.sovworks.eds.android.filemanager.fragments.FilePropertiesFragment;
 import com.sovworks.eds.android.filemanager.fragments.PreviewFragment;
+import com.sovworks.eds.android.filemanager.fragments.VideoPreviewFragment;
 import com.sovworks.eds.android.filemanager.records.BrowserRecord;
 import com.sovworks.eds.android.filemanager.tasks.CheckStartPathTask;
 import com.sovworks.eds.android.fragments.TaskFragment;
@@ -296,21 +297,36 @@ public abstract class FileManagerActivityBase extends RxActivity implements Prev
         }
 	}
 
-	public void showPhoto(BrowserRecord currentFile, boolean allowInplace)
+	public void  showPhoto(BrowserRecord currentFile, boolean allowInplace)
 	{
-	    Logger.debug(TAG + ": showPhoto");
+	    Logger.debug(TAG + ": showPhoto ");
 		Path contextPath = currentFile == null ? null : currentFile.getPath();
-        if(!hasSelectedFiles() && contextPath == null)
+        if(!hasSelectedFiles() && contextPath == null) {
             hideSecondaryFragment();
-        else if(_isLargeScreenLayout || !allowInplace)
+        }
+        else if(_isLargeScreenLayout || !allowInplace){
             showPreviewFragment(contextPath);
+        }
 	}
+
+    public void  showVideo(BrowserRecord currentFile)
+    {
+        Logger.debug(TAG + ": showVideo");
+        Path contextPath = currentFile == null ? null : currentFile.getPath();
+        if(!hasSelectedFiles() && contextPath == null) {
+            hideSecondaryFragment();
+        }
+        else{
+            showVideoPreviewFragment(contextPath);
+        }
+    }
 
     @Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-	    if(GlobalConfig.isTest())
-	        TEST_INIT_OBSERVABLE.onNext(false);
+	    if(GlobalConfig.isTest()) {
+            TEST_INIT_OBSERVABLE.onNext(false);
+        }
         Util.setTheme(this);
 	    super.onCreate(savedInstanceState);
         Logger.debug("fm start intent: " + getIntent());
@@ -822,6 +838,12 @@ public abstract class FileManagerActivityBase extends RxActivity implements Prev
     private void showPreviewFragment(Path currentImage)
     {
         PreviewFragment f = PreviewFragment.newInstance(currentImage);
+        showSecondaryFragment(f, PreviewFragment.TAG);
+    }
+
+    private void showVideoPreviewFragment(Path currentVideo)
+    {
+        VideoPreviewFragment f = VideoPreviewFragment.newInstance(currentVideo);
         showSecondaryFragment(f, PreviewFragment.TAG);
     }
 

@@ -1,11 +1,12 @@
 下载 gradle-4.10.1
 https://github.com/gradle/gradle-distributions/releases/download/v4.10.1/gradle-4.10.1-all.zip
+set path=D:\cc\gradle-4.10.1\bin;%path%;
 
 编译
-set path=D:\cc\gradle-4.10.1\bin;%path%;
 cd /d D:\git\edslite
 
-gradle.bat build
+set JAVA_HOME=C:\Program Files\Java\jdk-1.8
+gradlew.bat build
 
 
 调试
