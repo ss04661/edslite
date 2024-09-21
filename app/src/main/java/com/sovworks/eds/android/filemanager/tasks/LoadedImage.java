@@ -4,8 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.media.ExifInterface;
 import android.os.PowerManager;
-import android.support.media.ExifInterface;
+//import android.support.media.ExifInterface;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
