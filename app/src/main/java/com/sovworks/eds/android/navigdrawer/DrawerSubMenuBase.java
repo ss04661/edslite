@@ -28,16 +28,16 @@ public abstract class DrawerSubMenuBase extends DrawerMenuItemBase
     @Override
     public void saveState(Bundle state)
     {
-        if(isExpanded())
-            state.putInt(STATE_EXPANDED_POSITION, getPositionInAdapter());
+//        if(isExpanded())
+//            state.putInt(STATE_EXPANDED_POSITION, getPositionInAdapter());
     }
 
     @Override
     public void restoreState(Bundle state)
     {
-        int expPos = state.getInt(STATE_EXPANDED_POSITION, -1);
-        if(expPos >= 0 && expPos == getPositionInAdapter())
-            expand();
+//        int expPos = state.getInt(STATE_EXPANDED_POSITION, -1);
+//        if(expPos >= 0 && expPos == getPositionInAdapter())
+        expand();
     }
 
     public boolean isExpanded()
@@ -47,11 +47,11 @@ public abstract class DrawerSubMenuBase extends DrawerMenuItemBase
 
     public boolean onBackPressed()
     {
-        if(isExpanded())
-        {
-            collapse();
-            return true;
-        }
+//        if(isExpanded())
+//        {
+//            collapse();
+//            return true;
+//        }
         return false;
     }
 
@@ -201,8 +201,6 @@ public abstract class DrawerSubMenuBase extends DrawerMenuItemBase
     private static final String STATE_EXPANDED_POSITION = "com.sovworks.eds.android.navigdrawer.DrawerSubMenuBase.EXPANDED_POSITION";
     private boolean _isExpanded;
 
-
-
     private Collection<? extends DrawerMenuItemBase> _subItems;
 
     private void rotateExpandedIcons()
@@ -220,17 +218,17 @@ public abstract class DrawerSubMenuBase extends DrawerMenuItemBase
         }
     }
 
-    private void collapseAll()
-    {
-        ListView lv = getDrawerController().getDrawerListView();
-        for(int i=0;i<lv.getCount();i++)
-        {
-            Object di = lv.getItemAtPosition(i);
-            if(di instanceof DrawerSubMenuBase && ((DrawerSubMenuBase)di).isExpanded())
-                ((DrawerSubMenuBase) di).collapse();
-
-        }
-    }
+//    private void collapseAll()
+//    {
+//        ListView lv = getDrawerController().getDrawerListView();
+//        for(int i=0;i<lv.getCount();i++)
+//        {
+//            Object di = lv.getItemAtPosition(i);
+//            if(di instanceof DrawerSubMenuBase && ((DrawerSubMenuBase)di).isExpanded())
+//                ((DrawerSubMenuBase) di).collapse();
+//
+//        }
+//    }
 
     /*private ImageView getIconImageView()
     {

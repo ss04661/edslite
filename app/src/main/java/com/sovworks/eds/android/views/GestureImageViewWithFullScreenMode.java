@@ -48,10 +48,9 @@ public class GestureImageViewWithFullScreenMode extends GestureImageView// imple
     private void setNavVisibility(boolean visible)
     {
         int newVis = SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
         if (!visible)
-            newVis |= SYSTEM_UI_FLAG_FULLSCREEN | SYSTEM_UI_FLAG_IMMERSIVE | SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+            newVis |= SYSTEM_UI_FLAG_FULLSCREEN | SYSTEM_UI_FLAG_IMMERSIVE;
         
         final boolean changed = newVis == getSystemUiVisibility();
 
@@ -72,11 +71,11 @@ public class GestureImageViewWithFullScreenMode extends GestureImageView// imple
     protected void onTouchUp()
 	{
 		super.onTouchUp();
-        if(_isFullScreenMode)
-        {
-            setNavVisibility(true);
-            delayedFullScreen();
-        }
+//        if(_isFullScreenMode)
+//        {
+//            setNavVisibility(true);
+//            delayedFullScreen();
+//        }
 	}
 
 	private boolean _isFullScreenMode;
@@ -95,15 +94,15 @@ public class GestureImageViewWithFullScreenMode extends GestureImageView// imple
         super.onWindowVisibilityChanged(visibility);
         if(_isFullScreenMode)
         {
-            setNavVisibility(true);
-            delayedFullScreen();
+            setNavVisibility(false);
+//            delayedFullScreen();
         }
     }
     
-    private void delayedFullScreen()
-    {    	
-        // When we become visible, we show our navigation elements briefly
-        // before hiding them.
-        getHandler().postDelayed(_navHider, 2000);
-    }
+//    private void delayedFullScreen()
+//    {
+//        // When we become visible, we show our navigation elements briefly
+//        // before hiding them.
+//        getHandler().postDelayed(_navHider, 2000);
+//    }
 }

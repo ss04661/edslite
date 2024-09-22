@@ -384,12 +384,12 @@ public abstract class FileManagerActivityBase extends RxActivity implements Prev
     public void onWindowFocusChanged(boolean hasFocus)
     {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus)
-        {
-            PreviewFragment pf = (PreviewFragment) getFragmentManager().findFragmentByTag(PreviewFragment.TAG);
-            if(pf!=null)
-                pf.updateImageViewFullScreen();
-        }
+//        if (hasFocus)
+//        {
+//            PreviewFragment pf = (PreviewFragment) getFragmentManager().findFragmentByTag(PreviewFragment.TAG);
+//            if(pf!=null)
+//                pf.updateImageViewFullScreen();
+//        }
     }
 
     @Override

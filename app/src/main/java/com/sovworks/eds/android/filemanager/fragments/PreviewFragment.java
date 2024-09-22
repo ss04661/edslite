@@ -204,6 +204,8 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 		View view = inflater.inflate(R.layout.preview_fragment, container, false);
 		_mainImageView = view.findViewById(R.id.imageView);
 		_mainImageView.setAutoZoom(UserSettings.getSettings(getActivity()).isImageViewerAutoZoomEnabled());
+
+		Logger.debug(TAG + ": currentImagePath : "+ _currentImagePath);
 		_mainImageView.setNavigListener(new NavigListener()
 		{			
 			@Override
