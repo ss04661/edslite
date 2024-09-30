@@ -2,6 +2,8 @@ package com.sovworks.eds.android.views;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Handler;
 import android.util.AttributeSet;
 
@@ -28,6 +30,11 @@ public class GestureImageViewWithFullScreenMode extends GestureImageView// imple
 
    public void setFullscreenMode(boolean activate)
    {
+       // 横屏不要全屏
+       int currentOrientation = getResources().getConfiguration().orientation;
+       if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+           return;
+       }
        if(activate)
        {
            _isFullScreenMode = true;

@@ -694,7 +694,7 @@ public abstract class FileManagerActivityBase extends RxActivity implements Prev
         if(savedState == null)
         {
             if(getIntent().getData() == null)
-                _drawer.showContainers();
+                _drawer.showSubMenu();
             showPromoDialogIfNeeded();
         }
     }

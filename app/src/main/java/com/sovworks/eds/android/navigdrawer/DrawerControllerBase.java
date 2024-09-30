@@ -170,21 +170,20 @@ public abstract class DrawerControllerBase
             item.restoreState(b);
     }
 
-    public void showContainers()
+    public void showSubMenu()
     {
         openDrawer();
         DrawerAdapter da = (DrawerAdapter) _drawerListView.getAdapter();
         for(int i=0, l=da.getCount();i<l;i++)
         {
             DrawerMenuItemBase item = da.getItem(i);
-            if(item instanceof DrawerContainersMenu)
+            if(item instanceof DrawerSubMenuBase)
             {
-                DrawerContainersMenu dcm = (DrawerContainersMenu) item;
+                DrawerSubMenuBase dcm = (DrawerSubMenuBase) item;
                 if(!dcm.isExpanded())
                     dcm.rotateIconAndChangeState(da.getView(i, dcm.findView(_drawerListView), _drawerListView));
             }
         }
-
     }
 
     protected List<DrawerMenuItemBase> fillDrawer()
@@ -193,10 +192,12 @@ public abstract class DrawerControllerBase
         boolean isSelectAction = getMainActivity().isSelectAction();
         ArrayList<DrawerMenuItemBase> list = new ArrayList<>();
         DrawerAdapter adapter = new DrawerAdapter(list);
-        if(i.getBooleanExtra(FileManagerActivity.EXTRA_ALLOW_BROWSE_CONTAINERS, true))
+        if(i.getBooleanExtra(FileManagerActivity.EXTRA_ALLOW_BROWSE_CONTAINERS, true)){
             adapter.add(new DrawerContainersMenu(this));
-        if(i.getBooleanExtra(FileManagerActivity.EXTRA_ALLOW_BROWSE_DEVICE, true))
+        }
+        if(i.getBooleanExtra(FileManagerActivity.EXTRA_ALLOW_BROWSE_DEVICE, true)){
             adapter.add(new DrawerLocalFilesMenu(this));
+        }
         if(!isSelectAction)
         {
             adapter.add(new DrawerSettingsMenuItem(this));

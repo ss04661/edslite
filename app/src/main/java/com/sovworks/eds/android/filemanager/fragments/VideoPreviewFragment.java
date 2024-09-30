@@ -46,7 +46,6 @@ public class VideoPreviewFragment extends RxFragment implements FileManagerFragm
 {
 	public static final String TAG = "VideoPreviewFragment";
 
-//	public static final String STATE_CURRENT_VIDEO_PATH = "com.sovworks.eds.android.CURRENT_VIDEO_PATH";
 	public static final String STATE_CURRENT_PATH = "com.sovworks.eds.android.CURRENT_VIDEO_PATH";
 
 	public static VideoPreviewFragment newInstance(Path currentVideoPath)
@@ -166,6 +165,7 @@ public class VideoPreviewFragment extends RxFragment implements FileManagerFragm
 		player.setMediaSource(mediaSource);
 		player.prepare();
 		player.play(); // 开始播放
+
 		setNavVisibility(view,false); // 进入全屏模式
 		return view;
 	}
