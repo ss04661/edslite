@@ -1390,7 +1390,6 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
     public void selectFileByName(String name)
 	{
         ListView lv = getListView();
-        BrowserRecord lr = null;
         Logger.debug("selectFileByName : " + name);
         for(int i=0;i<lv.getCount();i++)
         {
@@ -1403,7 +1402,22 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
             }
         }
 	}
-    
+
+    public void unSelectFileByName(String name)
+    {
+        ListView lv = getListView();
+        Logger.debug("unSelectFileByName : " + name);
+        for(int i=0;i<lv.getCount();i++)
+        {
+            BrowserRecord rec = (BrowserRecord) lv.getItemAtPosition(i);
+            if(rec.allowSelect() && rec.getName().equals(name))
+            {
+                unselectFile(rec);
+                lv.setSelection(i);
+                break;
+            }
+        }
+    }
     public void scrollToFile(String name)
 	{
         ListView lv = getListView();

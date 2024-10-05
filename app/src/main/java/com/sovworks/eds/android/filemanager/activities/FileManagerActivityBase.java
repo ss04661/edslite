@@ -802,6 +802,16 @@ public abstract class FileManagerActivityBase extends RxActivity implements Prev
         toast.show();
     }
 
+    public void unSelectFileByName(String name)
+    {
+        FileListViewFragment f = getFileListViewFragment();
+        if(f!=null)
+            f.unSelectFileByName(name);
+        Toast toast = Toast.makeText(getApplicationContext(), "UnSelected "+name, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
     @Override
     public void scrollToFile(String name)
     {

@@ -58,6 +58,7 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 		void onToggleFullScreen();
 		void closePreviewFragment();
 		void selectFileByName(String name);
+		void unSelectFileByName(String name);
 		void scrollToFile(String name);
 	}
 	
@@ -233,21 +234,28 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 					Logger.showAndLog(getActivity(), e);
 				}
 			}
-		});
-		_mainImageView.setEditListener(new EditListener()
-		{
+
 			@Override
 			public void onClose()
 			{
 				Logger.debug("onClose");
 				closePreviewFragment();
 			}
+		});
+		_mainImageView.setEditListener(new EditListener()
+		{
 
 			@Override
 			public void onSelect()
 			{
 				Logger.debug("onSelect");
 				selectImage();
+			}
+			@Override
+			public void onUnSelect()
+			{
+				Logger.debug("onUnSelect");
+				unSelectImage();
 			}
 		});
 
@@ -471,6 +479,16 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 		Host h = getPreviewFragmentHost();
 		h.closePreviewFragment();
 		h.scrollToFile(fileName);
+	}
+
+	private void unSelectImage()
+	{
+		String filePath = _currentImagePath.getPathDesc();
+		String fileName  = new java.io.File(filePath).getName();
+
+		Logger.debug(_currentImagePath.getPathString());
+		Logger.debug(_currentImagePath.getPathDesc());
+		getPreviewFragmentHost().unSelectFileByName(fileName);
 	}
 
 	private void selectImage()

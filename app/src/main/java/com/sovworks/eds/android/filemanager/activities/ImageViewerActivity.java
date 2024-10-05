@@ -122,7 +122,12 @@ public class ImageViewerActivity extends Activity implements PreviewFragment.Hos
     {
     }
 
-    @Override
+	@Override
+	public void unSelectFileByName(String name) {
+
+	}
+
+	@Override
     public void scrollToFile(String name)
     {
     }
