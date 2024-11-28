@@ -1,0 +1,4 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true" android:drawable="@drawable/pv_button_pressed_background" /> <!-- 点击时的背景 -->
+    <item android:drawable="@drawable/pv_button_normal_background" /> <!-- 正常状态的背景 -->
+</selector>

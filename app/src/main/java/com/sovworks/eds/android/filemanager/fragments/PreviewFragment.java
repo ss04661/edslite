@@ -2,8 +2,10 @@ package com.sovworks.eds.android.filemanager.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ViewSwitcher;
 
 import com.sovworks.eds.android.Logger;
@@ -24,7 +27,6 @@ import com.sovworks.eds.android.helpers.CachedPathInfo;
 import com.sovworks.eds.android.service.FileOpsService;
 import com.sovworks.eds.android.settings.UserSettings;
 import com.sovworks.eds.android.views.GestureImageView.NavigListener;
-import com.sovworks.eds.android.views.GestureImageView.EditListener;
 import com.sovworks.eds.android.views.GestureImageViewWithFullScreenMode;
 import com.sovworks.eds.exceptions.ApplicationException;
 import com.sovworks.eds.fs.Path;
@@ -35,7 +37,10 @@ import com.trello.rxlifecycle2.components.RxFragment;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.concurrent.CancellationException;
 
 import io.reactivex.Single;
@@ -60,6 +65,7 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 		void selectFileByName(String name);
 		void unSelectFileByName(String name);
 		void scrollToFile(String name);
+		void confirmDeleteFiles(ArrayList<Path> paths);
 	}
 	
 	public static final String TAG = "PreviewFragment";
@@ -198,15 +204,93 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
         Logger.debug(TAG + ": onBackPressed");
 		return false;
 	}
-		
+
+	public int getPathLabel(String path){
+		SharedPreferences sharedPreferences = UserSettings.getSettings(getActivity()).getSharedPreferences();
+		Set<String> likePaths = sharedPreferences.getStringSet("喜欢列表", new HashSet<>());
+		Set<String> disLikePaths = sharedPreferences.getStringSet("不喜欢列表", new HashSet<>());
+        if(likePaths.contains(path)){
+			return 1;
+		}
+		if(disLikePaths.contains(path)){
+			return 2;
+		}
+		return 0;
+	}
+
+	public void setPathLabel(String path, int label){
+		SharedPreferences sharedPreferences = UserSettings.getSettings(getActivity()).getSharedPreferences();
+		Set<String> likePaths = sharedPreferences.getStringSet("喜欢列表", new HashSet<>());
+		Set<String> disLikePaths = sharedPreferences.getStringSet("不喜欢列表", new HashSet<>());
+		if(label==1){
+			likePaths.add(path);
+			disLikePaths.remove(path);
+		}else if(label==2){
+			likePaths.remove(path);
+			disLikePaths.add(path);
+		}else{
+			likePaths.remove(path);
+			disLikePaths.remove(path);
+		}
+		sharedPreferences.edit().putStringSet("喜欢列表", likePaths).commit();
+		sharedPreferences.edit().putStringSet("不喜欢列表", disLikePaths).commit();
+	}
+
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) 
 	{
+		Logger.debug(TAG + ": currentImagePath : "+ _currentImagePath);
+
 		View view = inflater.inflate(R.layout.preview_fragment, container, false);
+		Button likeButton = view.findViewById(R.id.like_button);
+		_likeButton = likeButton;
+		likeButton.setOnClickListener((v)-> {
+			if(_currentImagePath==null){
+				return;
+			}
+			String path = _currentImagePath.getPathString();
+			int label = getPathLabel(path);
+			if(label==1){ //喜欢
+				setPathLabel(path, 2);
+				likeButton.setText("讨厌");
+			}else if(label==2){ //讨厌
+				setPathLabel(path, 0);
+				likeButton.setText("一般");
+			}else{ //一般
+				setPathLabel(path, 1);
+				likeButton.setText("喜欢");
+			}
+		});
+		view.findViewById(R.id.previous_button).setOnClickListener((v)-> {
+            try {
+                moveLeft();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (ApplicationException e) {
+                throw new RuntimeException(e);
+            }
+        });
+		view.findViewById(R.id.next_button).setOnClickListener((v)-> {
+			try {
+				moveRight();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			} catch (ApplicationException e) {
+				throw new RuntimeException(e);
+			}
+		});
+		view.findViewById(R.id.close_button).setOnClickListener((v)-> {
+			Logger.debug("close_button");
+			closePreviewFragment();
+		});
+		view.findViewById(R.id.delete_button).setOnClickListener((v)-> {
+			Logger.debug("delete_button");
+			deleteImage();
+        });
+
 		_mainImageView = view.findViewById(R.id.imageView);
 		_mainImageView.setAutoZoom(UserSettings.getSettings(getActivity()).isImageViewerAutoZoomEnabled());
 
-		Logger.debug(TAG + ": currentImagePath : "+ _currentImagePath);
 		_mainImageView.setNavigListener(new NavigListener()
 		{			
 			@Override
@@ -242,24 +326,7 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 				closePreviewFragment();
 			}
 		});
-		_mainImageView.setEditListener(new EditListener()
-		{
 
-			@Override
-			public void onSelect()
-			{
-				Logger.debug("onSelect");
-				selectImage();
-			}
-			@Override
-			public void onUnSelect()
-			{
-				Logger.debug("onUnSelect");
-				unSelectImage();
-			}
-		});
-
-		_viewSwitcher = view.findViewById(R.id.viewSwitcher);
 		_mainImageView.setOnLoadOptimImageListener(srcImageRect ->
 		{
             if(_isOptimSupported)
@@ -270,6 +337,7 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
             _mainImageView.getViewRect().round(_viewRect);
             _imageViewPrepared.onNext(_viewRect.width() > 0 && _viewRect.height() > 0);
         });
+
 
 
 		if(UserSettings.getSettings(getActivity()).isImageViewerFullScreenModeEnabled())
@@ -283,7 +351,6 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 	{
 		_mainImageView.clearImage();
 		_mainImageView = null;
-		_viewSwitcher = null;
 		super.onDestroyView();		
 	}	
 	
@@ -368,7 +435,7 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 	}
 
 	private GestureImageViewWithFullScreenMode _mainImageView;
-	private ViewSwitcher _viewSwitcher;
+	private Button _likeButton;
 	private Path _currentImagePath, _prevImagePath, _nextImagePath;
 	private final Rect _viewRect = new Rect();
 	private boolean _isFullScreen, _isOptimSupported;
@@ -433,6 +500,19 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 		}
 		if(_currentImagePath == null)
 			_currentImagePath = getFirstImagePath();
+
+		if (_currentImagePath!=null) {
+			String path = _currentImagePath.getPathString();
+			int defaultLabel = getPathLabel(path);
+			if(defaultLabel==1){
+				_likeButton.setText("喜欢");
+			}else if(defaultLabel==2){
+				_likeButton.setText("不喜");
+			}else{
+				_likeButton.setText("一般");
+			}
+		}
+
 	}
 
 	private Path getFirstImagePath()
@@ -450,17 +530,10 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 	{
 		return (Host)getActivity();
 	}
-		
-	private void showLoading()
-	{
-		if(_viewSwitcher.getCurrentView()==_mainImageView)
-			_viewSwitcher.showNext();		
-	}
+
 	
 	private void showImage()
 	{
-		if(_viewSwitcher.getCurrentView()!=_mainImageView)
-			_viewSwitcher.showPrevious();
 		getActivity().invalidateOptionsMenu();
 	}
 
@@ -499,6 +572,13 @@ public class PreviewFragment extends RxFragment implements FileManagerFragment
 		Logger.debug(_currentImagePath.getPathString());
 		Logger.debug(_currentImagePath.getPathDesc());
 		getPreviewFragmentHost().selectFileByName(fileName);
+	}
+
+	private void deleteImage()
+	{
+		ArrayList<Path> paths = new ArrayList<>();
+		paths.add(_currentImagePath);
+		getPreviewFragmentHost().confirmDeleteFiles(paths);
 	}
 
 	private void moveLeft() throws IOException, ApplicationException

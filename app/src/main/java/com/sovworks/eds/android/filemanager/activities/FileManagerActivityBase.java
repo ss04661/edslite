@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
@@ -52,7 +53,10 @@ import com.sovworks.eds.settings.GlobalConfig;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.trello.rxlifecycle2.components.RxActivity;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CancellationException;
 
@@ -786,9 +790,19 @@ public abstract class FileManagerActivityBase extends RxActivity implements Prev
     }
 
     @Override
+    public void confirmDeleteFiles(ArrayList<Path> paths) {
+        FileListViewFragment f = getFileListViewFragment();
+        if(f!=null)
+            f.confirmDeleteFiles(paths);
+    }
+
+    @Override
     public void closePreviewFragment()
     {
         hideSecondaryFragment();
+        FileListViewFragment f = getFileListViewFragment();
+        if(f!=null)
+            f.refreshLikeState();
     }
 
     @Override

@@ -1,35 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ViewSwitcher xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/viewSwitcher"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    
-    	<com.sovworks.eds.android.views.GestureImageViewWithFullScreenMode
-		    android:id="@+id/imageView"
-		    android:contentDescription="@string/eds"
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent" />
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
 
-		<RelativeLayout
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_gravity="center" >
+<!-- ImageView铺满整个屏幕 -->
+<com.sovworks.eds.android.views.GestureImageViewWithFullScreenMode
+	android:id="@+id/imageView"
+	android:contentDescription="@string/eds"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:scaleType="centerCrop"/> <!-- 替换为你的图片 -->
 
-		    <ProgressBar
-		        android:id="@+id/progressbar"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_centerVertical="true" />
+<!-- 悬浮按钮容器 -->
+<LinearLayout
+	android:id="@+id/button_container"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:layout_alignParentBottom="true"
+	android:orientation="horizontal"
+	android:gravity="center"
+	android:padding="8dp"
+	android:background="@android:color/transparent">
 
-		    <TextView
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_centerVertical="true"
-		        android:layout_toRightOf="@+id/progressbar"
-		        android:gravity="center"
-		        android:paddingLeft="5dp"
-		        android:text="@string/loading" />
+	<!-- 按钮 -->
+	<Button
+		android:id="@+id/like_button"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:text="一般"
+		android:background="@drawable/pv_button_background"
+		android:layout_margin="2dp"
+		android:paddingTop="5dp"
+		android:paddingBottom="5dp" />
 
-		</RelativeLayout>
+	<Button
+		android:id="@+id/previous_button"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:text="上个"
+		android:background="@drawable/pv_button_background"
+		android:layout_margin="2dp"
+		android:paddingTop="5dp"
+		android:paddingBottom="5dp" />
 
-</ViewSwitcher> 
+	<Button
+		android:id="@+id/next_button"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:text="下个"
+		android:background="@drawable/pv_button_background"
+		android:layout_margin="2dp"
+		android:paddingTop="5dp"
+		android:paddingBottom="5dp" />
+
+	<Button
+		android:id="@+id/close_button"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:text="关闭"
+		android:background="@drawable/pv_button_background"
+		android:layout_margin="2dp"
+		android:paddingTop="5dp"
+		android:paddingBottom="5dp" />
+
+	<Button
+		android:id="@+id/delete_button"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:text="删除"
+		android:background="@drawable/pv_button_background"
+		android:layout_margin="2dp"
+		android:paddingTop="5dp"
+		android:paddingBottom="5dp" />
+
+</LinearLayout>
+</RelativeLayout>

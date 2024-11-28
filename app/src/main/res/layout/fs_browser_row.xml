@@ -41,15 +41,32 @@
         android:layout_toEndOf="@android:id/icon1"
         android:gravity="center_vertical"
         android:layout_centerVertical="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@android:id/text1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/FileName" />
+                <TextView
+                    android:id="@android:id/text2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/FileDesc"/>
+            </LinearLayout>
             <TextView
-                android:id="@android:id/text1"
-                android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-                style="@style/FileName" />
-            <TextView
-                android:id="@android:id/text2"
-                android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-                style="@style/FileDesc"/>
+                android:id="@+id/like_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="40dp"/>
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

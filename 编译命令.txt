@@ -15,5 +15,9 @@ adb devices
 
 adb install D:\git\edslite\app\build\outputs\apk\liteLicCheckNoneNoinetNofsml\debug\EDS-lite-licCheckNone-noinet-nofsml-debug-v2.0.0.237.apk
 
+
+
+adb install D:\git\edslite\app\build\outputs\apk\liteLicCheckNoneNoinetNofsml\release\EDS-lite44-licCheckNone-noinet-nofsml-release-v2.0.0.237.apk
+
 adb logcat | findstr EDS
 

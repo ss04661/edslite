@@ -12,4 +12,5 @@
     </group>
     <item android:id="@+id/select_all" android:title="@string/select_all" android:icon="@drawable/ic_menu_select_all" android:showAsAction="ifRoom"  android:orderInCategory="14"/>
     <item android:id="@+id/sort" android:title="@string/sort" android:icon="@drawable/ic_menu_sort" android:showAsAction="ifRoom"  android:orderInCategory="15"/>
+    <item android:id="@+id/like_folder" android:title="喜欢" android:icon="@drawable/ic_menu_sort" android:showAsAction="ifRoom"  android:orderInCategory="16"/>
 </menu>

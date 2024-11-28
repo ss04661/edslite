@@ -132,6 +132,11 @@ public class ImageViewerActivity extends Activity implements PreviewFragment.Hos
     {
     }
 
+	@Override
+	public void confirmDeleteFiles(ArrayList<Path> paths) {
+
+	}
+
 	public TaskFragment.TaskCallbacks getRestorePathsTaskCallbacks()
 	{
 		return new ProgressDialogTaskFragmentCallbacks(this,R.string.loading)

@@ -195,6 +195,17 @@ public abstract class FsBrowserRecord extends CachedPathInfoBase implements Brow
             iv.setImageDrawable(_miniIcon);
             iv.setVisibility(View.VISIBLE);
         }
+
+        TextView likeText = view.findViewById(R.id.like_text);
+        String path = FsBrowserRecord.this.getPath().getPathString();
+        int label = hf.getPathLabel(path);
+        if(label==1){
+            likeText.setText("喜欢");
+        }else if(label==2){
+            likeText.setText("讨厌");
+        }else{
+            likeText.setText("");
+        }
     }
 
     @Override

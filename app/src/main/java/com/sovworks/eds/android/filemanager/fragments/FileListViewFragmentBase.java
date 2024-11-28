@@ -69,7 +69,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
@@ -118,6 +120,7 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState)
     {
         Logger.debug(TAG + " onCreateView");
+        refreshLikePaths();
         View view = inflater.inflate(R.layout.file_list_view_fragment, container, false);
         _selectedFileEditText = view.findViewById(R.id.selected_file_edit_text);
         _listView = view.findViewById(android.R.id.list);
@@ -254,7 +257,20 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
                         && allowCreateNewFolder()
         );
         menu.findItem(R.id.select_all).setVisible((!isSelectAction || !isSingleSelectionMode()) && !getSelectableFiles().isEmpty());
+        likeFolder = menu.findItem(R.id.like_folder);
+        if(currentPath!=null){
+            refreshLikePaths();
+            int label = getPathLabel(currentPath);
+            if(label==1){
+                likeFolder.setTitle("喜欢");
+            }else if(label==2){
+                likeFolder.setTitle("讨厌");
+            }else{
+                likeFolder.setTitle("一般");
+            }
+        }
     }
+
 
     @Override
 	public boolean onOptionsItemSelected(MenuItem menuItem)
@@ -592,10 +608,16 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
                         if(!(err instanceof CancellationException))
                             Logger.log(err);
                     });
-        if(loadInfo.folder!=null)
+        if(loadInfo.folder!=null){
             updateCurrentFolderLabel(loadInfo.folder);
+            Path p = loadInfo.folder.getPath();
+            if(p!=null){
+                currentPath = p.getPathString();
+            }
+        }
         showFileIfNeeded(loadInfo.file);
     }
+
 
     private void setLocationNotLoading()
     {
@@ -975,6 +997,9 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
             case R.id.select_all:
                 selectAllFiles();
                 return true;
+            case R.id.like_folder:
+                clickLikeFolderMenu();
+                return true;
             case R.id.send:
                 sendFiles();
                 mhi.clearSelection = true;
@@ -982,6 +1007,28 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
             default:
                 return false;
         }
+    }
+
+    String currentPath;
+    MenuItem likeFolder;
+
+    private void clickLikeFolderMenu(){
+        if(currentPath==null){
+            return;
+        }
+        refreshLikePaths();
+        int label = getPathLabel(currentPath);
+        if(label==1){ //喜欢
+            setPathLabel(currentPath, 2);
+            likeFolder.setTitle("讨厌");
+        }else if(label==2){ //讨厌
+            setPathLabel(currentPath, 0);
+            likeFolder.setTitle("一般");
+        }else{ //一般
+            setPathLabel(currentPath, 1);
+            likeFolder.setTitle("喜欢");
+        }
+        refreshLikePaths();
     }
 
     protected void showNewFileDialog(boolean isDir)
@@ -1105,6 +1152,14 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
 		b.putBoolean(ARG_WIPE_FILES, wipe);
 		DeleteConfirmationDialog.showDialog(getFragmentManager(), b);
 	}
+
+    public void confirmDeleteFiles(ArrayList<Path> paths)
+    {
+        Bundle b = new Bundle();
+        LocationsManager.storePathsInBundle(b, getRealLocation(), paths);
+        b.putBoolean(ARG_WIPE_FILES, false);
+        DeleteConfirmationDialog.showDialog(getFragmentManager(), b);
+    }
 
     protected void onSelectionChanged()
     {
@@ -1385,6 +1440,52 @@ public abstract class FileListViewFragmentBase extends RxFragment implements
                 add(OpenAsContainerTask.newInstance(loc, false), OpenAsContainerTask.TAG).
                 commit();
 
+    }
+
+    Set<String> likePaths =new HashSet<>();
+    Set<String> disLikePaths =new HashSet<>();
+    public int getPathLabel(String path){
+        if(likePaths.contains(path)){
+            return 1;
+        }
+        if(disLikePaths.contains(path)){
+            return 2;
+        }
+        return 0;
+    }
+
+    public void setPathLabel(String path, int label){
+        SharedPreferences sharedPreferences = UserSettings.getSettings(getActivity()).getSharedPreferences();
+        Set<String> likePaths = sharedPreferences.getStringSet("喜欢列表", new HashSet<>());
+        Set<String> disLikePaths = sharedPreferences.getStringSet("不喜欢列表", new HashSet<>());
+        if(label==1){
+            likePaths.add(path);
+            disLikePaths.remove(path);
+        }else if(label==2){
+            likePaths.remove(path);
+            disLikePaths.add(path);
+        }else{
+            likePaths.remove(path);
+            disLikePaths.remove(path);
+        }
+        sharedPreferences.edit().putStringSet("喜欢列表", likePaths).commit();
+        sharedPreferences.edit().putStringSet("不喜欢列表", disLikePaths).commit();
+    }
+
+    public void refreshLikePaths(){
+        SharedPreferences sharedPreferences = UserSettings.getSettings(getActivity()).getSharedPreferences();
+        likePaths = sharedPreferences.getStringSet("喜欢列表", new HashSet<>());
+        disLikePaths = sharedPreferences.getStringSet("不喜欢列表", new HashSet<>());
+    }
+
+    public void refreshLikeState(){
+        refreshLikePaths();
+        ListView lv = getListView();
+        for(int i=0;i<lv.getCount();i++)
+        {
+            BrowserRecord rec = (BrowserRecord) lv.getItemAtPosition(i);
+            rec.updateView();
+        }
     }
 
     public void selectFileByName(String name)

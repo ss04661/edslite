@@ -31,12 +31,6 @@ public class GestureImageView extends ImageView
 		void onClose();
 	}
 
-	public interface EditListener
-	{
-		void onSelect();
-		void onUnSelect();
-	}
-
 	public GestureImageView(Context context, AttributeSet attr)
 	{
 		super(context, attr);
@@ -69,34 +63,26 @@ public class GestureImageView extends ImageView
 		});
 		_flingDetector = new GestureDetector(context,new GestureDetector.SimpleOnGestureListener()
 		{			
-//			@Override
-//			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-//					float velocityY)
-//			{
-//				if(_navigListener!=null && _allowNavig )//&& Math.abs(velocityX) > MIN_NAVIG_VELOCITY)
-//				{
-//					if(velocityX<0)
-//						_navigListener.onNext();
-//					else
-//						_navigListener.onPrev();
-//
-//					return true;
-//				}
-//				return false;
-//			}
-//
-//            @Override
-//            public boolean onDoubleTap(MotionEvent e) {
-//                // 处理双击事件
-//				_editListener.onClose();
-//                return true;
-//            }
+			@Override
+			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+					float velocityY)
+			{
+				if(_navigListener!=null && _allowNavig )//&& Math.abs(velocityX) > MIN_NAVIG_VELOCITY)
+				{
+					if(velocityX<0)
+						_navigListener.onNext();
+					else
+						_navigListener.onPrev();
 
-//            @Override
-//            public void onLongPress(MotionEvent e) {
-//                // 处理长按事件
-//				_navigListener.onClose();
-//			}
+					return true;
+				}
+				return false;
+			}
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+				_navigListener.onClose();
+            }
 		});
 		setScaleType(ScaleType.MATRIX);
 	}
@@ -106,11 +92,6 @@ public class GestureImageView extends ImageView
 		_navigListener = listener;
 	}
 
-	public void setEditListener(EditListener listener)
-	{
-		_editListener = listener;
-	}
-
 	private Boolean isSelect = false;
 	@Override
 	public boolean onTouchEvent(@NonNull MotionEvent ev)
@@ -118,30 +99,6 @@ public class GestureImageView extends ImageView
 		// Let the ScaleGestureDetector inspect all events.
 		_scaleDetector.onTouchEvent(ev);
 		_flingDetector.onTouchEvent(ev);
-
-		MotionEvent event = ev;
-		if (event.getAction() == MotionEvent.ACTION_DOWN) {
-			float x = event.getX();
-			float y = event.getY();
-			int width = getWidth();
-			int height = getHeight();
-
-			if (x < width / 2 && y >= height / 2) {
-				_navigListener.onPrev();
-			} else if (x >= width / 2 && y >= height / 2) {
-				_navigListener.onNext();
-			} else if (x < width / 2 && y < height / 2) {
-				if(!isSelect){
-					_editListener.onSelect();
-					isSelect = true;
-				}else{
-					_editListener.onUnSelect();
-					isSelect = false;
-				}
-			} else {
-				_navigListener.onClose();
-			}
-		}
 
 		final int action = ev.getAction();
 		switch (action & MotionEvent.ACTION_MASK)
@@ -375,7 +332,6 @@ public class GestureImageView extends ImageView
 	
 	
 	private NavigListener _navigListener;
-	private EditListener _editListener;
 	private final RectF _imageRect = new RectF(), _viewRect = new RectF();
 	private final ScaleGestureDetector _scaleDetector;
 	private final GestureDetector _flingDetector;
